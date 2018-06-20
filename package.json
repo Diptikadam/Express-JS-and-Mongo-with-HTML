@@ -1,0 +1,24 @@
+{
+  "name": "api_assignment",
+  "version": "1.0.0",
+  "description": "",
+  "main": "getapi.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Diptikadam/MongoDB.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Diptikadam/MongoDB/issues"
+  },
+  "homepage": "https://github.com/Diptikadam/MongoDB#readme",
+  "dependencies": {
+    "body-parser": "^1.18.3",
+    "express": "^4.16.3",
+    "mongodb": "^3.0.10"
+  }
+}

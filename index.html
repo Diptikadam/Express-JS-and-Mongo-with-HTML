@@ -5,6 +5,7 @@
 
 	<script>
 		window.onload = function(){
+
 			document.getElementById("get-users").onclick = function() {
 				console.log("clicked!");
 				var xhttp = new XMLHttpRequest();
@@ -121,7 +122,7 @@
 				};
 				xhttp.open("GET","http://localhost:3000/count?c=count",true);
 				xhttp.send();
-			
+
 
 			}*/
 
@@ -132,6 +133,11 @@
 			}*/
 
 			document.getElementById("submit").onclick = function() {
+        var jsonObj = {};
+        jsonObj.cname = document.getElementById("cityname").value;
+        send(JSON.stringify(jsonObj));
+
+        var count = parseInt(document.getElementById("myText").value);
 
 				var xmlhttp = new XMLHttpRequest();   // new HttpRequest instance
 				xmlhttp.onreadystatechange = function() {
@@ -145,14 +151,11 @@
 				xmlhttp.open("POST", "http://localhost:3000");
 				xmlhttp.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
 				xmlhttp.send(JSON.stringify(myData));
+ 		}
 
-				
 
-		 		}
-		
-		 
 }
-		
+
 </script></head>
  <body>
 
