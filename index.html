@@ -1,212 +1,287 @@
 <!DOCTYPE html>
 <html>
-<head>
-	<title>Test project</title>
+	<head>
+		<title>Test project</title>
+		<script type="text/javascript">
+			window.onload = function() 
+			{
+				
+					console.log("clicked!");
+					var xhttp = new XMLHttpRequest();
+					xhttp.onreadystatechange = function() 
+					{
+					    if (this.readyState == 4 && this.status == 200) 
+					    {
+					       console.log("data", xhttp.responseText);
+					       var respObj = JSON.parse(xhttp.responseText);
+					       console.log(respObj[0]);
 
-	<script>
-		window.onload = function(){
-			document.getElementById("get-users").onclick = function() {
-				console.log("clicked!");
-				var xhttp = new XMLHttpRequest();
-				xhttp.onreadystatechange = function() {
-				    if (this.readyState == 4 && this.status == 200) {
-				       // Typical action to be performed when the document is ready:
-				       console.log("data", xhttp.responseText);
-				       var respObj = JSON.parse(xhttp.responseText);
-				       console.log(respObj[0]);
+					       var table = "<table id =\"table\" style=\"width:100%\";> \
+					        <tr> \
+						       <th>Delete</th>\
+						       <th>Update</th>\
+					           <th>Name</th> \
+					           <th>Mobile</th> \
+					           <th>Address</th> \
+					           <th>City</th> \
+					           <th>State</th> \
+					           <th>Gender</th> \
+					        </tr>";
 
-				       var table = "<table style=\"width:100%\"> \
-				        <tr> \
-				           <th>Id</th> \
-				           <th>Name</th> \
-				           <th>Mobile</th> \
-				           <th>Address</th> \
-				           <th>City</th> \
-				           <th>State</th> \
-				           <th>Gender</th> \
-				        </tr>";
+					        for(var i = 0; i < respObj.length; i++)
+					        {
+					         	table += "<tr> \
+						           <td> <button oid=\"" + respObj[i]._id + "\" class=\"delete-btn\"  type=\"button\">Delete</button></td>\
+						           <td> <button oid=\"" + respObj[i]._id + "\" class=\"update-btn\" id=\"update\" type=\"button\">Update</button></td>\
+						           <td>"+ respObj[i].name +"</td> \
+						           <td>"+ respObj[i].mobile +"</td> \
+						           <td>"+ respObj[i].Address +"</td> \
+						           <td>"+ respObj[i].city +"</td> \
+						           <td>"+ respObj[i].state +"</td>\
+						           <td>"+ respObj[i].gender +"</td> \
+						         </tr>";
+					        }
+					        table += "</table>";
 
-				        for(var i = 0; i < respObj.length; i++){
-				         	table += "<tr> \
-					           <td>"+ respObj[i].id +"</td> \
-					           <td>"+ respObj[i].name +"</td> \
-					           <td>"+ respObj[i].mobile +"</td> \
-					           <td>"+ respObj[i].Address +"</td> \
-					           <td>"+ respObj[i].city +"</td> \
-					           <td>"+ respObj[i].state +"</td>\
-					           <td>"+ respObj[i].gender +"</td> \
-					         </tr>";
-				         }
-				       table += "</table>";
+					        document.getElementById("user-data").innerHTML = table;
 
-				       document.getElementById("user-data").innerHTML = table;
-				    }
-				};
-				xhttp.open("GET", "http://localhost:3000/users", true);
-				xhttp.send();
-			}
+					        console.log("btn", document.getElementsByClassName("delete-btn"));
 
-			/*document.getElementById("get-city").onclick = function() {
-				console.log("clicked!");
-				var xhttp = new XMLHttpRequest();
-				xhttp.onreadystatechange = function() {
-				    if (this.readyState == 4 && this.status == 200) {
-				       // Typical action to be performed when the document is ready:
-				       console.log("data", xhttp.responseText);
-				       var respObj1 = JSON.parse(xhttp.responseText);
-				       console.log(respObj1[0]);
-				       var table1 = "<table style=\"width:100%\"> \
-				        <tr> \
-				           <th>Id</th> \
-				           <th>Name</th> \
-				        </tr>";
+					        var del_arr = document.getElementsByClassName("delete-btn");
 
-				        for(var i = 0; i < respObj1.length; i++){
-				         	table1 += "<tr> \
-					           <td>"+ respObj1[i].id +"</td> \
-					           <td>"+ respObj1[i].name +"</td> \
-					         </tr>";
-				         }
-				       table1 += "</table>";
+					        for(var i = 0; i < del_arr.length; i++)
+					        {	
+					        	
+					        	del_arr[i].onclick = function()
+					        	{
+					        		console.log("this", this);
+					        		var myData1={};
+					        		myData1._id = this.getAttribute("oid");
+					        		var xmlhttp = new XMLHttpRequest(); 
+							        xmlhttp.open("POST", "http://localhost:3000/delete");
+									xmlhttp.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+									xmlhttp.send(JSON.stringify(myData1));
+									console.log(JSON.stringify(myData1));
+								}
+							}
+ 							
+							console.log("update btn", document.getElementsByClassName("update-btn"));
 
-				       document.getElementById("city-data").innerHTML = table1;
-				    }
-				};
-				xhttp.open("GET", "http://localhost:3000/city", true);
-				xhttp.send();
-			}
+							var up_arr = document.getElementsByClassName("update-btn");
 
-			document.getElementById("get-states").onclick = function() {
-		    	console.log("clicked!");
-				var xhttp = new XMLHttpRequest();
-				xhttp.onreadystatechange = function() {
-				    if (this.readyState == 4 && this.status == 200) {
-				       // Typical action to be performed when the document is ready:
-				       console.log("data", xhttp.responseText);
-				       var respObj2 = JSON.parse(xhttp.responseText);
-				       console.log(respObj2[0]);
+					        for(var i=0;i<up_arr.length;i++)
+					        {
+								up_arr[i].onclick=function()
+								{
+									console.log("this",this);
+									var id = this.getAttribute("oid");
 
-				       var table2 = "<table style=\"width:100%\"> \
-				        <tr> \
-				           <th>Id</th> \
-				           <th>Name</th> \
-				        </tr>";
-
-				        for(var i = 0; i < respObj2.length; i++){
-				         	table2 += "<tr> \
-					           <td>"+ respObj2[i].id +"</td> \
-					           <td>"+ respObj2[i].name +"</td> \
-					         </tr>";
-				         }
-				       table2 += "</table>";
-
-				       document.getElementById("state-data").innerHTML = table2;
-				    }
-				};
-				xhttp.open("GET", "http://localhost:3000/states", true);
-				xhttp.send();
-			}
-
-			document.getElementById("get-count").onclick = function() {
-				var count = parseInt(document.getElementById("myText").value);
-				//console.log("count", count);
-
-				var xhttp = new XMLHttpRequest();
-
-				xhttp.onreadystatechange = function() {
-				if (this.readyState == 4 && this.status == 200) {
-				       // Typical action to be performed when the document is ready:
-				   console.log("data", xhttp.responseText);
-					}
-				};
-				xhttp.open("GET","http://localhost:3000/count?c=count",true);
-				xhttp.send();
-			
-
-			}*/
-
-			/*document.getElementById("").function() {
-
-				var count = parseInt(document.getElementById("myText").value);
-				//console.log("count", count);
-			}*/
-
-			document.getElementById("submit").onclick = function() {
-
-				var xmlhttp = new XMLHttpRequest();   // new HttpRequest instance
-				xmlhttp.onreadystatechange = function() {
-				    if (this.readyState == 4 && this.status == 200) {
-				       document.getElementById("result").innerHTML =
-				       this.responseText;
-
-
-				    }
-				 };
-				xmlhttp.open("POST", "http://localhost:3000");
-				xmlhttp.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
-				xmlhttp.send(JSON.stringify(myData));
-
+									var table=document.getElementById("table");
+									for(var i=1;i<table.rows.length;i++){
+										table.rows[i].onclick=function(){
+											document.getElementById("name").value=this.cells[2].innerHTML;
+											document.getElementById("mobile").value=this.cells[3].innerHTML;
+											document.getElementById("Address").value=this.cells[4].innerHTML;
+											document.getElementById("city").value=this.cells[5].innerHTML;
+										    document.getElementById("state").value=this.cells[6].innerHTML;
+											if(this.cells[7].innerHTML=="Female")
+											{
+												document.getElementById("female").checked = true;
+												document.getElementById("male").checked = false;
+											}
+											else
+											{
+												document.getElementById("male").checked = true;
+												document.getElementById("female").checked = false;
+											}
+										}
+									}
+									document.getElementById("update").onclick = function() 
+									{
+										var myData={};
+										myData._id = id;
+										myData.name = document.getElementById("name").value;
+										myData.mobile = document.getElementById("mobile").value;
+										myData.Address = document.getElementById("Address").value;
+										myData.city = document.getElementById("city").value;
+										myData.state = document.getElementById("state").value;
+									    if(document.getElementById("female").checked) myData.gender = document.getElementById("female").value;
+									    else myData.gender = document.getElementById("male").value;
+		                 				var xmlhttp = new XMLHttpRequest(); 
+									    xmlhttp.open("POST", "http://localhost:3000/update");
+										xmlhttp.setRequestHeader("Content-Type", "application/json;charset=UTF-8");				
+										xmlhttp.send(JSON.stringify(myData));
+								        console.log(JSON.stringify(myData));
+									}
+								}
+							}
+						}
+					}	
+					xhttp.open("GET", "http://localhost:3000/users", true);
+					xhttp.send();
 				
 
-		 		}
-		
-		 
-}
-		
-</script></head>
- <body>
+				// document.getElementById("get-city").onclick = function() {
+				// 	console.log("clicked!");
+				// 	var xhttp = new XMLHttpRequest();
+				// 	xhttp.onreadystatechange = function() {
+				// 	    if (this.readyState == 4 && this.status == 200) {
+				// 	       // Typical action to be performed when the document is ready:
+				// 	       console.log("data", xhttp.responseText);
+				// 	       var respObj1 = JSON.parse(xhttp.responseText);
+				// 	       console.log(respObj1[0]);
+				// 	       var table1 = "<table style=\"width:100%\"> \
+				// 	        <tr> \
+				// 	           <th>Id</th> \
+				// 	           <th>Name</th> \
+				// 	        </tr>";
 
-<form action="index.html" id="myForm">
-<table cellpadding="4" width="50%" align="center"  >
+				// 	        for(var i = 0; i < respObj1.length; i++){
+				// 	         	table1 += "<tr> \
+				// 		           <td>"+ respObj1[i].id +"</td> \
+				// 		           <td>"+ respObj1[i].name +"</td> \
+				// 		         </tr>";
+				// 	         }
+				// 	       table1 += "</table>";
 
-<tr>
-  <td><b><a>Name</a></td>
-  <td><input type=text name=textnames id="textname" size="30"></td>
-  </tr>
+				// 	       document.getElementById("city-data").innerHTML = table1;
+				// 	    }
+				// 	};
+				// 	xhttp.open("GET", "http://localhost:3000/city", true);
+				// 	xhttp.send();
+				// }
 
-<tr>
-  <td><a><b>MobileNo</a></td>
-  <td><input type="text" name="mobileno" id="mobileno" size="30" maxlength="10"></td>
-  </tr>
+				// document.getElementById("get-states").onclick = function() {
+			 //    	console.log("clicked!");
+				// 	var xhttp = new XMLHttpRequest();
+				// 	xhttp.onreadystatechange = function() {
+				// 	    if (this.readyState == 4 && this.status == 200) {
+				// 	       // Typical action to be performed when the document is ready:
+				// 	       console.log("data", xhttp.responseText);
+				// 	       var respObj2 = JSON.parse(xhttp.responseText);
+				// 	       console.log(respObj2[0]);
 
-  <tr>
-  <td><a><b>Address</a></td>
-  <td><textarea name="paddress" id="paddress" size="30"></textarea></td>
-  </tr>
+				// 	       var table2 = "<table style=\"width:100%\"> \
+				// 	        <tr> \
+				// 	           <th>Id</th> \
+				// 	           <th>Name</th> \
+				// 	        </tr>";
 
-<tr>
-  <td><a><b>City</a></td>
-  <td><select name="City" id="city">
-  <option value="Uran">Uran</option>
-      <option value="Bbhandup">Bhandup</option>
-      <option value="Surat">Surat</option>
-      <option value="Punji">Punji</option>
-      <option value="Mumbai">Mumbai</option>
-  </select></td>
-  </tr>
-<tr>
-  <td><a><b>State</a></td>
-  <td><select Name="State" id="state">
-  <option value="Maharashtra">Maharashtra</option>
-      <option value="Gujrat">Gujrat</option>
-      <option value="Goa">Goa</option>
-       <option value="punjab">Punjab</option>
-  </select></td>
-  </tr>
-<tr>
-<td><a><b>Gender</a></td>
-<td><input type="radio" name="credit" value="credit card">Female<br>
-<input type="radio" name="credit" value="Deb">Male<br>
-</tr>
- <tr>
-  <td colspan="2"><input type="submit" value="Submit" id="submit">
-  <button id="get-users" type="button">Get users</button>
-  <input type="reset"></td>
-  </tr>
-  </table>
-  </form>
+				// 	        for(var i = 0; i < respObj2.length; i++){
+				// 	         	table2 += "<tr> \
+				// 		           <td>"+ respObj2[i].id +"</td> \
+				// 		           <td>"+ respObj2[i].name +"</td> \
+				// 		         </tr>";
+				// 	         }
+				// 	       table2 += "</table>";
 
-  <div id="demo"></div>
-  <div id="user-data"></div>
-  </body>
+				// 	       document.getElementById("state-data").innerHTML = table2;
+				// 	    }
+				// 	};
+				// 	xhttp.open("GET", "http://localhost:3000/states", true);
+				// 	xhttp.send();
+				// }
+
+				// document.getElementById("get-count").onclick = function() {
+				// 	var count = parseInt(document.getElementById("myText").value);
+				// 	//console.log("count", count);
+
+				// 	var xhttp = new XMLHttpRequest();
+
+				// 	xhttp.onreadystatechange = function() {
+				// 	if (this.readyState == 4 && this.status == 200) {
+				// 	       // Typical action to be performed when the document is ready:
+				// 	   console.log("data", xhttp.responseText);
+				// 		}
+				// 	};
+				// 	xhttp.open("GET","http://localhost:3000/count?c=count",true);
+				// 	xhttp.send();
+				
+
+				// }
+
+				document.getElementById("submit").onclick = function() {
+					//console.log("clicked!");
+					var myData = {};
+	         		myData.name = document.getElementById("name").value;
+	                myData.mobile = document.getElementById("mobile").value;
+	        		myData.Address = document.getElementById("Address").value;
+	        		myData.city = document.getElementById("city").value;
+	                myData.state = document.getElementById("state").value;
+	                if(document.getElementById("female").checked) myData.gender = document.getElementById("female").value;
+	                else myData.gender = document.getElementById("male").value;
+					var xmlhttp = new XMLHttpRequest();   
+					xmlhttp.open("POST", "http://localhost:3000/insert");
+					xmlhttp.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+					xmlhttp.send(JSON.stringify(myData));
+					console.log(JSON.stringify(myData));
+				}
+			}
+	
+		</script>
+    </head>
+	<body>
+		<form action="index.html" id="myForm">
+			<table cellpadding="4" width="50%" align="center" >
+				<tr>
+				    <td><b><a>Name</a></td>
+				    <td><input type=text name=name id="name" size="30"></td>
+				</tr>
+
+				<tr>
+				    <td><a><b>MobileNo</a></td>
+				    <td><input type="text" name="mobile" id="mobile" size="30" maxlength="10" minlength="10" ></td>
+				</tr>
+
+				<tr>
+				    <td><a><b>Address</a></td>
+				    <td><textarea name="Address" id="Address" size="50"></textarea></td>
+				</tr>
+
+				<tr>
+				 	<td><a><b>City</a></td>
+				    <td>
+				    	<select name="city" id="city">
+						    <option value="Uran">Uran</option>
+						    <option value="Bhandup">Bhandup</option>
+						    <option value="Surat">Surat</option>
+						    <option value="Punji">Punji</option>
+						    <option value="Mumbai">Mumbai</option>
+				        </select>
+					</td> 
+				</tr>
+
+				<tr>
+				  <td><a><b>State</a></td>
+				  	<td>
+					  	<select Name="state" id="state">
+					  		<option value="Maharashtra">Maharashtra</option>
+					        <option value="Gujrat">Gujrat</option>
+					        <option value="Goa">Goa</option>
+					        <option value="punjab">Punjab</option>
+					  	</select>
+					</td>
+			    </tr>
+
+				<tr>
+					<td><a><b>Gender</a></td>
+					<td>
+						<input type="radio" name="gender" value="Female" id="female" checked>Female<br>
+						<input type="radio" name="gender" value="Male" id="male">Male<br> 
+					</td>
+				</tr>
+
+				<tr>
+				    <td colspan="2"><button type="button" id="submit">submit</button>
+					    
+					    <button id="update" type="button">Save Changes</button>
+					    <input type="reset">
+					</td>
+			    </tr>
+		    </table>
+	    </form>
+
+	    <div id="demo"></div>
+	    <div id="user-data"></div>
+    </body>
 </html>
