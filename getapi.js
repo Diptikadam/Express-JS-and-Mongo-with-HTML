@@ -58,7 +58,7 @@ app.get('/states', (req, res) => {
 
 app.get('/count', (req, res) => {
   	console.log("req.body", res);
-    dbo.collection("Users").find().limit(3).toArray(function(err, result) {
+    dbo.collection("Users").find().limit(5).toArray(function(err, result) {
     if (err) throw err;
     console.log(result);
     var myjson3=JSON.stringify(result);
@@ -93,9 +93,9 @@ app.post('/insert', function (req, res) {
     else{
       dbo.collection("Users").insertOne(body1,function(err,result){
         if(err) throw err;
-        console.log(result);
         var myjson4=JSON.stringify(result);
-          res.send(myjson4);
+        console.log("id for insert",JSON.stringify(result.insertedId));
+          res.send(JSON.stringify(result.insertedId));
       });
      }
   });
@@ -130,7 +130,26 @@ app.post('/update', function (req, res) {
 		});
 });
 
+app.post('/citydata', function (req, res) {
+	var body1 = req.body;
+	console.log("body =", body1._id);
+	if(!body1._id){
+      res.send(JSON.stringify({ mess: "id parameter missing"}));
+    }
+    else
+    {
+    	dbo.collection("City").find({sid: new mongodb.ObjectID(body1._id)}).toArray(function(err,result){
+    		//console.log("sid id ", sid);
+		if(err) throw err;
+		   console.log(result);
 
+		var myjson4=JSON.stringify(result);
+        res.send(myjson4);
+	    });
+
+    }	
+});
+	
 
   app.listen(3000, () => console.log('Example app listening on port 3000!'))
 });
