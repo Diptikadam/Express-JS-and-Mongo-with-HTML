@@ -1,390 +1,167 @@
-<!DOCTYPE html>
-<html>
-	<head>
-		<title>Test project</title>
-		<style>
-			#table {
-			    font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
-			    border-collapse: collapse;
-			    width: 100%;
-			}
+const express = require('express');
+const app = express();
+var bodyParser = require('body-parser');
+var mongodb = require('mongodb');
+var MongoClient = require('mongodb').MongoClient;
+var url = "mongodb://localhost:27017/";
 
-			#table td, #table th {
-			    border: 2px solid #ddd;
-			    padding: 6px;
-			}
+MongoClient.connect(url, function(err, db) {
+  if (err) throw err;
+  var dbo = db.db("Assignment");
 
-			#table tr:nth-child(even){background-color: #f2f2f2;}
+//app.use(function (req, res, next) { console.log("before bp"); next(); });
+app.use(bodyParser.json());
+//app.use(function (req, res, next) { console.log("after bp"); next(); });
+//app.use(bodyParser.urlencoded({ extended: false }));
 
-			#table tr:hover {background-color: #ddd;}
+app.use(function (req, res, next) {
+	    // Website you wish to allow to connect
+	if(req.headers.origin) {
+	   	res.setHeader('Access-Control-Allow-Origin', req.headers.origin);
+		res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
+		res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type');
+		res.setHeader('Access-Control-Allow-Credentials', true);
+	    }
+	    next();
+    });
 
-			#table th {
-			    padding-top: 12px;
-			    padding-bottom: 12px;
-			    text-align: left;
-			    background-color: black;
-			    color: white;
-			}
-			.button {
-			    background-color: gray;
-			    border: none;
-			    color: white;
-			    padding: 10px 25px;
-			    text-align: center;
-			    display: inline-block;
-			    font-size: 16px;
-			    margin: 4px 2px;
-			    cursor: pointer;
-			}
+app.get('/', (req, res) => {
+	res.send("Hello World!");
+})
 
-			span{
-				color:red;
-			}
+app.get('/users', (req, res) => {
+	dbo.collection("Users").find({}).toArray(function(err, result) {
+	    if (err) throw err;
+	    console.log(result);
+	    var myjson=JSON.stringify(result);
+	    res.send(myjson);
+	});
+});
 
-			p{
-				font-size:12px;
-				color:red;
-			}
+app.get('/city', (req, res) => {
+  	dbo.collection("City").find({}).toArray(function(err, result) {
+	    if (err) throw err;
+	    console.log(result);
+	    var myjson2=JSON.stringify(result);
+	    res.send(myjson2);
+	});
+});
 
-		</style>
+app.get('/states', (req, res) => {
+  	dbo.collection("State").find({}).toArray(function(err, result) {
+	    if (err) throw err;
+	    console.log(result);
+	    var myjson1=JSON.stringify(result);
+	    res.send(myjson1);
+	});
+});
 
-		<script type="text/javascript">
-			window.onload = function() 
-			{
-					document.getElementById("changes").style.visibility = 'hidden';
+app.get('/count', (req, res) => {
+  	console.log("req.body", res);
+    dbo.collection("Users").find().limit(5).toArray(function(err, result) {
+    if (err) throw err;
+    console.log(result);
+    var myjson3=JSON.stringify(result);
+	res.send(myjson3);
+  });
+});
 
-					function onUpdateClick() {
-						document.getElementById("submit").style.visibility = 'hidden';
-						document.getElementById("changes").style.visibility = 'visible';
-						console.log("this",this);
-						var id = this.getAttribute("oid");
-						var table=document.getElementById("table");
-						for(var i=1;i<table.rows.length;i++){
-							table.rows[i].onclick=function(){
-									var rowdata=this;
-								document.getElementById("name").value=this.cells[2].innerText;
-								document.getElementById("mobile").value=this.cells[3].innerText;
-								document.getElementById("Address").value=this.cells[4].innerText;
-								document.getElementById("state").value=this.cells[5].innerText;
-							    document.getElementById("city").value=this.cells[6].innerText;
-								if(this.cells[7].innerHTML=="Female")
-								{
-									document.getElementById("female").checked = true;
-									document.getElementById("male").checked = false;
-								}
-								else
-								{
-									document.getElementById("male").checked = true;
-									document.getElementById("female").checked = false;
-								}					
+app.post('/cityselect',(req,res)=> {
+    var body = req.body;
+    console.log("body =", body);
+    if(!body.cname){
+      res.send(JSON.stringify({ mess: "cname parameter missing"}));
+    }
+    else
+    {
+      dbo.collection("Users").find({city: body.cname }).toArray(function(err,result){
+        if(err) throw err;
+        console.log(result);
+        var myjson4=JSON.stringify(result);
+        res.send(myjson4);
+        });
+    }
+});
 
-								document.getElementById("changes").onclick = function() 
-								{
-										console.log("this in changes ",rowdata);
-									document.getElementById("submit").style.visibility = 'visible';
-								    document.getElementById("changes").style.visibility = 'hidden';
-									var myData={};
-									myData._id = id;
-									myData.name = document.getElementById("name").value;
-									myData.mobile = document.getElementById("mobile").value;
-									myData.Address = document.getElementById("Address").value;
-									myData.city = document.getElementById("city").value;
-									myData.state = document.getElementById("state").value;
-								    if(document.getElementById("female").checked) myData.gender = document.getElementById("female").value;
-								    else myData.gender = document.getElementById("male").value;
+app.post('/insert', function (req, res) {
+	var body1 = req.body;
+    // for safety reasons
+    console.log("body =", body1);
+    if(!body1.name|| !body1.mobile || !body1.Address || !body1.city || !body1.state || !body1.gender){
+      res.send(JSON.stringify({ mess: " parameter missing"}));
+    }   
+    else{
+      dbo.collection("Users").insertOne(body1,function(err,result){
+        if(err) throw err;
+        var myjson4=JSON.stringify(result);
+        console.log("id for insert",JSON.stringify(result.insertedId));
+          res.send(JSON.stringify(result.insertedId));
+      });
+     }
+  });
 
-		             				var xmlhttp = new XMLHttpRequest(); 
-								    xmlhttp.open("POST", "http://localhost:3000/update");
-									xmlhttp.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
-									xmlhttp.send(JSON.stringify(myData));
-							
-									rowdata.cells[2].innerHTML=myData.name;
-									rowdata.cells[3].innerHTML=myData.mobile;
-									rowdata.cells[4].innerHTML=myData.Address;
-									rowdata.cells[5].innerHTML=myData.state;
-								    rowdata.cells[6].innerHTML=myData.city;
-								    rowdata.cells[7].innerHTML=myData.gender;
+app.post('/delete', function (req, res) {
+	var body1 = req.body;
+	console.log("body =", body1._id);
+	if(!body1._id){
+		res.send(JSON.stringify({ mess: "parameter missing"}));
+	}
+	else
+	{
+		dbo.collection('Users').deleteOne({_id: new mongodb.ObjectID(body1._id)},function(err,result){
+		if(err) throw err;
+        console.log("document deleted");
+       
+		});
+	}
+});
 
-									document.getElementById("reset").click();
-							        console.log(JSON.stringify(myData));
-								}
-					        } 
-				        }
-			        }  
+app.post('/update', function (req, res) {
+	var body1 = req.body;
+	console.log(body1);
+	var body2 = body1._id;
+	console.log(body2);
+	delete body1._id;
+	console.log(body1);
+	if(!body1.name|| !body1.mobile || !body1.Address || !body1.city || !body1.state || !body1.gender)
+	{
+		res.send(JSON.stringify({ mess: " parameter missing"}));
+	}
+	else{
+		console.log(body1);
+		newquery = { $set: body1 }
+		console.log(new mongodb.ObjectID(body2));
+		dbo.collection('Users').updateOne({ _id: new mongodb.ObjectID(body2)},newquery,function(err,result){
+		if(err) throw err;
+		console.log("document updated");
+		});
 
-					function onDeleteClick()
-					{
-						console.log("this", this);
-					    var myData1={};
-					    myData1._id = this.getAttribute("oid");
-					    var xmlhttp = new XMLHttpRequest(); 
-						xmlhttp.open("POST", "http://localhost:3000/delete");
-						xmlhttp.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
-						xmlhttp.send(JSON.stringify(myData1));
-						var tab = document.getElementById("table");
-						tab.deleteRow(this.parentNode.parentNode.rowIndex);
-									//document.getElementById("table").deleteRow();
-					   console.log(JSON.stringify(myData1));
-					}
-
-					function onSelect()
-					{
-						var option = document.getElementById("state");
-						var selectedOption = option.options[option.selectedIndex];
-						console.log(selectedOption);
-
-					    var myData1={};
-					    myData1._id = selectedOption.getAttribute("sid");
-					    console.log(myData1._id);
-
-					 	var xmlhttp = new XMLHttpRequest(); 
-						xmlhttp.open("POST", "http://localhost:3000/citydata");
-						xmlhttp.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
-						xmlhttp.send(JSON.stringify(myData1));
-						console.log(JSON.stringify(myData1));
-						//var xmhttp1 = new XMLHttpRequest();
-						xmlhttp.onreadystatechange = function() 
-						{
-						    if (this.readyState == 4 && this.status == 200) 
-						    {
-						    
-						    	var resp = JSON.parse(xmlhttp.responseText);
-							    console.log("data state", resp);
-							    var list1 ="<select Name=\"city\" id=\"city\">";
-							    for(var i = 0; i < resp.length; i++)
-							    {
-									list1 += "<option value=\""+resp[i].name+"\" class=\"opt\" >"+resp[i].name+"</option>";
-								}	  
-								list1 +="</select>";	
-								document.getElementById("city-data").innerHTML = list1;
-
-						    }
-						}   
-
-					}
-
-					var xhttp = new XMLHttpRequest();
-					xhttp.onreadystatechange = function() 
-					{
-					    if (this.readyState == 4 && this.status == 200) 
-					    {
-					       console.log("data", xhttp.responseText);
-					        var respObj = JSON.parse(xhttp.responseText);
-
-					       var table = "<table id =\"table\" style=\"width:100%\";> \
-					        <tr> \
-						       <th>Delete</th>\
-						       <th>Update</th>\
-					           <th>Name</th> \
-					           <th>Mobile</th> \
-					           <th>Address</th> \
-					           <th>State</th> \
-					           <th>City</th> \
-					           <th>Gender</th> \
-					        </tr>";
-
-					        for(var i = 0; i < respObj.length; i++)
-					        {
-					         	table += "<tr> \
-						           <td> <button oid=\"" + respObj[i]._id + "\" class=\"delete-btn\"  type=\"button\">Delete</button></td>\
-						           <td> <button oid=\"" + respObj[i]._id + "\" class=\"update-btn\" id=\"update\" type=\"button\">Update</button></td>\
-						           <td>"+ respObj[i].name +"</td> \
-						           <td>"+ respObj[i].mobile +"</td> \
-						           <td>"+ respObj[i].Address +"</td> \
-						           <td>"+ respObj[i].state +"</td>\
-						           <td>"+ respObj[i].city +"</td>\
-						           <td>"+ respObj[i].gender +"</td> \
-						         </tr>";
-					        }
-
-					        table += "</table>";
-
-					        document.getElementById("user-data").innerHTML = table;
-					        //console.log("btn", document.getElementsByClassName("delete-btn"));
-					        var del_arr = document.getElementsByClassName("delete-btn");
-					        for(var i = 0; i < del_arr.length; i++)
-					        {	
-					        	del_arr[i].onclick =onDeleteClick;
-							}
-							//console.log("update btn", document.getElementsByClassName("update-btn"));
-
-							var up_arr = document.getElementsByClassName("update-btn");
-
-					        for(var i=0;i<up_arr.length;i++)
-					        {
-								up_arr[i].onclick = onUpdateClick;
-							}
-						}
-						
-					}	
-					xhttp.open("GET","http://localhost:3000/users", true);
-					xhttp.send();
-
-					var xmhttp = new XMLHttpRequest();
-					xmhttp.onreadystatechange = function() 
-					{
-						if (this.readyState == 4 && this.status == 200) 
-						{
-							var respObj = JSON.parse(xmhttp.responseText);
-						    console.log("data state", respObj);
-						    var list ="<select Name=\"state\" id=\"state\">";
-						    list +="<option>select-State</option>";
-						    for(var i = 0; i < respObj.length; i++)
-						    {
-								list += "<option sid=\""+respObj[i]._id+"\" value=\""+respObj[i].name+"\" class=\"opt\" >"+respObj[i].name+"</option>";
-							}	  
-							list+="</select>";	
-							document.getElementById("state-data").innerHTML = list;
-							//var option = document.getElementById("state");
-							//console.log(option);
-							for(var i = 0; i < respObj.length; i++)
-							{
-							  document.getElementById("state").onchange = onSelect;
-							}  
-
-						}
-						
-				    }
-				    
-					xmhttp.open("GET","http://localhost:3000/states",true);
-				    xmhttp.send();   
-
-					 
-
-				document.getElementById("submit").onclick = function formValidation()
-				{
-					var name = document.getElementById('name');
-					var mobile = document.getElementById('mobile');
-					if (inputAlphabet(name, "* For your name please use alphabets only *"))
-					{
-						return name.value;
- 					}
-
-					function inputAlphabet(inputtext, alertMsg) 
-					{
-						var alphaExp = /^[a-zA-Z]+$/;
-						if (inputtext.value.match(alphaExp)){
-							document.getElementById('p1').innerText = "";
-							if (mobile.value.match(/(7|8|9)\d{9}/)){
-								document.getElementById('p2').innerText = "";
-								var myData = {};
-				         		myData.name = inputtext.value;
-					            myData.mobile = mobile.value;
-					            myData.Address = document.getElementById("Address").value;
-					            myData.city = document.getElementById("city").value;
-					            myData.state = document.getElementById("state").value;
-					            if(document.getElementById("female").checked) myData.gender = document.getElementById("female").value;
-					            else myData.gender = document.getElementById("male").value;
-							    var xmlhttp = new XMLHttpRequest();   
-								xmlhttp.open("POST", "http://localhost:3000/insert");
-								xmlhttp.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
-								xmlhttp.send(JSON.stringify(myData));
-
-								//var xml1 = new XMLHttpRequest();
-								xmlhttp.onreadystatechange = function() 
-									{
-										console.log("new http request");
-									    if (this.readyState == 4 && this.status == 200) 
-									    {
-									    	var data = JSON.parse(xmlhttp.responseText);
-									    	console.log("data ",data);
-									    	var tabb = document.getElementById("table");
-											var len = (tabb.rows.length);
-											var row = tabb.insertRow(len).outerHTML="<tr>\
-											<td><button oid=\""+ data + "\" type=\"button\" class=\"delete-btn\" >Delete</td>\
-											<td><button oid=\""+ data + "\"type=\"button\" class=\"update-btn\">Update</td>\
-											<td>"+myData.name+"</td>\
-											<td>"+myData.mobile+"</td>\
-											<td>"+myData.Address+"</td>\
-											<td>"+myData.state+"</td>\
-											<td>"+myData.city+"</td>\
-											<td>"+myData.gender+"</td>\
-											<tr>";
-											// insert the new rows
-											var newElements = document.querySelectorAll("[oid=\"" + data +"\"]");
-											console.log("update id is",newElements);
-											newElements[0].onclick = onDeleteClick;
-											newElements[1].onclick = onUpdateClick;
-											document.getElementById("reset").click();
-											console.log(JSON.stringify(myData));
-									    }
-									}    	    
-							}
-							else document.getElementById('p2').innerText = "*invalid mobile number*"; 
-								
-						}
-													
-					    else 
-					    {
-							document.getElementById('p1').innerText = alertMsg; 
-						
-							return false;
-						}
-					}
-					
-				}
-			}
+	}
 	
-		</script>
-    </head>
-	<body>
-		<form action="index.html" id="myForm">
+});
+
+app.post('/citydata', function (req, res) {
+	var body1 = req.body;
+	console.log("body =", body1._id);
+	if(!body1._id){
+      res.send(JSON.stringify({ mess: "id parameter missing"}));
+    }
+    else
+    {
+    	dbo.collection("City").find({sid: new mongodb.ObjectID(body1._id)}).toArray(function(err,result){
+    		//console.log("sid id ", sid);
+		if(err) throw err;
+		   console.log(result);
+
+		var myjson4=JSON.stringify(result);
+        res.send(myjson4);
+	    });
+
+    }	
+});
+
+
 		
-			
-			<table cellpadding="4" width="50%" align="center" id="formtable">
-				
-				<tr>
-				    <td><b><a>Name</a></td>
-				    <td><input type=text name=name id="name" size="30" maxlength="20"required></td>
-				    <td><p id="p1"></p></td>
-				</tr>
 
-				<tr>
-				    <td><a><b>MobileNo</a></td>
-				    <td><input type="text" name="mobile" id="mobile" size="30" maxlength="10" minlength=10 required></td>
-				    <td><p id="p2"></p></td>
-				</tr>
-
-				<tr>
-				    <td><a><b>Address</a></td>
-				    <td><textarea name="Address" id="Address" size="50" maxlength="40" required></textarea></td>
-				</tr>
-
-				<tr>
-				  <td><a><b>State</a></td>
-				  	<td>
-					  	<div id="state-data"></div>
-					</td>
-			    </tr>
-
-				<tr>
-				 	<td><a><b>City</a></td>
-				    <td>
-				    	<div id="city-data"></div>  	
-					</td> 
-				</tr>
-
-				
-				<tr>
-					<td><a><b>Gender</a></td>
-					<td>
-						<input type="radio" name="gender" value="Female" id="female" checked>Female<br>
-						<input type="radio" name="gender" value="Male" id="male">Male<br> 
-					</td>
-				</tr>
-
-				<tr>
-				    <td colspan="2"><button type="button" id="submit" class="button" value="Submit">Submit</button>
-					    
-					    <button id="changes" type="button" class="button">Save Changes</button>
-					    <input type="reset" id="reset" class="button">
-					</td>
-			    </tr>
-		    </table><br><br>
-	    </form>
-
-	    <div id="demo"></div>
-	    <div id="user-data"></div>
-	    
-    </body>
-</html>
+  app.listen(3000, () => console.log('Example app listening on port 3000!'))
+});
