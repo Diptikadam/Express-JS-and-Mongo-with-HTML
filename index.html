@@ -59,129 +59,127 @@
 						var id = this.getAttribute("oid");
 						var table=document.getElementById("table");
 						var row = this.parentElement.parentElement;
-				              var rowdata = row;
-								document.getElementById("name").value=row.cells[2].innerText;
-								document.getElementById("mobile").value=row.cells[3].innerText;
-								document.getElementById("Address").value=row.cells[4].innerText;
-								document.getElementById("state").value=row.cells[5].innerText;
-								if(document.getElementById("state").value=="Maharashtra"){
-									var list4="<select Name=\"city\" id=\"city\">\
-									 <option value=\"Mumbai\" >Mumbai</option>\
-									 <option value=\"Pune\">Pune</option>\
-									 <option value=\"Nashik\" >Nashik</option>\
-									 <option value=\"Nagpur\" >Nagpur</option>\
-									 <option value=\"Thane\" >Thane</option>\
-									 </select>";
-									 document.getElementById("city-data").style.visibility = 'visible';
-									 document.getElementById("city-data").innerHTML = list4;
-									 document.getElementById("city").value=row.cells[6].innerHTML;
-								}
-								else if(document.getElementById("state").value=="Gujrat"){
-									var list4="<select Name=\"city\" id=\"city\">\
-									 <option value=\"Surat\" >Surat</option>\
-									 <option value=\"Rajkot\" >Rajkot</option>\
-									 <option value=\"Ahmedabad\" >Ahmedabad</option>\
-									 <option value=\"Vadodara\" >Vadodara</option>\
-									 </select>";
-									 document.getElementById("city-data").style.visibility = 'visible';
-									 document.getElementById("city-data").innerHTML = list4;
-									 document.getElementById("city").value=row.cells[6].innerHTML;
-								}
-								else if(document.getElementById("state").value=="Rajasthan"){
-									var list4="<select Name=\"city\" id=\"city\">\
-									 <option value=\"Jaipur\" >Jaipur</option>\
-									 <option value=\"Ajmer\" >Ajmer</option>\
-									 <option value=\"Pushkar\" >Pushkar</option>\
-									 </select>";
-									 document.getElementById("city-data").style.visibility = 'visible';
-									 document.getElementById("city-data").innerHTML = list4;
-									 document.getElementById("city").value=row.cells[6].innerHTML;
-								}
-								else if(document.getElementById("state").value=="Madhya Pradesh"){
-									var list4="<select Name=\"city\" id=\"city\">\
-									 <option value=\"Bhopal\" >Bhopal</option>\
-									 <option value=\"Indore\" >Indore</option>\
-									 <option value=\"Ujjain\" >Ujjain</option>\
-									 </select>";
-									 document.getElementById("city-data").style.visibility = 'visible';
-									 document.getElementById("city-data").innerHTML = list4;
-									 document.getElementById("city").value=row.cells[6].innerHTML;
-								}
-							  
-								if(row.cells[7].innerHTML=="Female")
-								{
-									document.getElementById("female").checked = true;
-									document.getElementById("male").checked = false;
-								}
-								else
-								{
-									document.getElementById("male").checked = true;
-									document.getElementById("female").checked = false;
-								}					
+				        var rowdata = row;
+						document.getElementById("name").value=row.cells[2].innerText;
+						document.getElementById("mobile").value=row.cells[3].innerText;
+						document.getElementById("Address").value=row.cells[4].innerText;
+						document.getElementById("state").value=row.cells[5].innerText;
+						if(document.getElementById("state").value=="Maharashtra"){
+							var list4="<select Name=\"city\" id=\"city\">\
+							 <option value=\"Mumbai\" >Mumbai</option>\
+							 <option value=\"Pune\">Pune</option>\
+							 <option value=\"Nashik\" >Nashik</option>\
+							 <option value=\"Nagpur\" >Nagpur</option>\
+							 <option value=\"Thane\" >Thane</option>\
+							 </select>";
+							 document.getElementById("city-data").style.visibility = 'visible';
+							 document.getElementById("city-data").innerHTML = list4;
+							 document.getElementById("city").value=row.cells[6].innerHTML;
+						}
+						else if(document.getElementById("state").value=="Gujrat"){
+							var list4="<select Name=\"city\" id=\"city\">\
+							 <option value=\"Surat\" >Surat</option>\
+							 <option value=\"Rajkot\" >Rajkot</option>\
+							 <option value=\"Ahmedabad\" >Ahmedabad</option>\
+							 <option value=\"Vadodara\" >Vadodara</option>\
+							 </select>";
+							 document.getElementById("city-data").style.visibility = 'visible';
+							 document.getElementById("city-data").innerHTML = list4;
+							 document.getElementById("city").value=row.cells[6].innerHTML;
+						}
+						else if(document.getElementById("state").value=="Rajasthan"){
+							var list4="<select Name=\"city\" id=\"city\">\
+							 <option value=\"Jaipur\" >Jaipur</option>\
+							 <option value=\"Ajmer\" >Ajmer</option>\
+							 <option value=\"Pushkar\" >Pushkar</option>\
+							 </select>";
+							 document.getElementById("city-data").style.visibility = 'visible';
+							 document.getElementById("city-data").innerHTML = list4;
+							 document.getElementById("city").value=row.cells[6].innerHTML;
+						}
+						else if(document.getElementById("state").value=="Madhya Pradesh"){
+							var list4="<select Name=\"city\" id=\"city\">\
+							 <option value=\"Bhopal\" >Bhopal</option>\
+							 <option value=\"Indore\" >Indore</option>\
+							 <option value=\"Ujjain\" >Ujjain</option>\
+							 </select>";
+							 document.getElementById("city-data").style.visibility = 'visible';
+							 document.getElementById("city-data").innerHTML = list4;
+							 document.getElementById("city").value=row.cells[6].innerHTML;
+						}
+					  
+						if(row.cells[7].innerHTML=="Female")
+						{
+							document.getElementById("female").checked = true;
+							document.getElementById("male").checked = false;
+						}
+						else
+						{
+							document.getElementById("male").checked = true;
+							document.getElementById("female").checked = false;
+						}					
 
-								document.getElementById("changes").onclick = function() 
-								{
-									console.log("this in changes ",rowdata);
-									//document.getElementById("submit").style.visibility = 'visible';
-								    
-								    var name = document.getElementById('name');
-									var mobile = document.getElementById('mobile');
-									if (inputAlphabet(name, "* For your name please use alphabets only *"))
-									{
-										return name.value;
- 					                }
- 					                function inputAlphabet(inputtext, alertMsg) 
-									{
-										var alphaExp = /^[a-zA-Z]+$/;
-										if (inputtext.value.match(alphaExp)){
-											document.getElementById('p1').innerText = "";
-											if (mobile.value.match(/(7|8|9)\d{9}/)){
-												document.getElementById('p2').innerText = "";
-												var myData={};
-												myData._id = id;
-												myData.name = document.getElementById("name").value;
-												myData.mobile = document.getElementById("mobile").value;
-												myData.Address = document.getElementById("Address").value;
-												myData.city = document.getElementById("city").value;
-												myData.state = document.getElementById("state").value;
-											    if(document.getElementById("female").checked) myData.gender = document.getElementById("female").value;
-											    else myData.gender = document.getElementById("male").value;
+						document.getElementById("changes").onclick = function() 
+						{
+							console.log("this in changes ",rowdata);
+							//document.getElementById("submit").style.visibility = 'visible';
+						    
+						    var name = document.getElementById('name');
+							var mobile = document.getElementById('mobile');
+							if (inputAlphabet(name, "* For your name please use alphabets only *")){
+								return name.value;
+				            }
+				            function inputAlphabet(inputtext, alertMsg) 
+							{
+								var alphaExp = /^[a-zA-Z]+$/;
+								if (inputtext.value.match(alphaExp)){
+									document.getElementById('p1').innerText = "";
+									if (mobile.value.match(/(7|8|9)\d{9}/)){
+										document.getElementById('p2').innerText = "";
+										var myData={};
+										myData._id = id;
+										myData.name = document.getElementById("name").value;
+										myData.mobile = document.getElementById("mobile").value;
+										myData.Address = document.getElementById("Address").value;
+										myData.city = document.getElementById("city").value;
+										myData.state = document.getElementById("state").value;
+									    if(document.getElementById("female").checked) myData.gender = document.getElementById("female").value;
+									    else myData.gender = document.getElementById("male").value;
 
-					             				var xmlhttp = new XMLHttpRequest(); 
-											    xmlhttp.open("POST", "http://localhost:3000/update");
-												xmlhttp.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
-												xmlhttp.send(JSON.stringify(myData));
+			             				var xmlhttp = new XMLHttpRequest(); 
+									    xmlhttp.open("POST", "http://localhost:3000/update");
+										xmlhttp.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+										xmlhttp.send(JSON.stringify(myData));
 
-												if(!myData.name || !myData.mobile || !myData.Address || !myData.city || !myData.state || !myData.gender){
-															document.getElementById('p3').innerText = "* All fields are mandatory*"; 
-												}
-												else{
-													document.getElementById('p3').innerText = "";
-													rowdata.cells[2].innerHTML=myData.name;
-													rowdata.cells[3].innerHTML=myData.mobile;
-													rowdata.cells[4].innerHTML=myData.Address;
-													rowdata.cells[5].innerHTML=myData.state;
-												    rowdata.cells[6].innerHTML=myData.city;
-												    rowdata.cells[7].innerHTML=myData.gender;
-
-													resetFun();	
-													document.getElementById("changes").style.visibility = 'hidden';
-													document.getElementById("submit").style.visibility = 'visible';
-													document.getElementById("city-data").style.visibility = 'hidden';
-											        console.log(JSON.stringify(myData));
-												}
-												
-										    }
-										    else document.getElementById('p2').innerText = "*invalid mobile number*";
-						                }
-						                else 
-									    {
-											document.getElementById('p1').innerText = alertMsg; 
-										
-											return false;
+										if(!myData.name || !myData.mobile || !myData.Address || !myData.city || !myData.state || !myData.gender){
+													document.getElementById('p3').innerText = "* All fields are mandatory*"; 
 										}
- 									}
+										else{
+											document.getElementById('p3').innerText = "";
+											rowdata.cells[2].innerHTML=myData.name;
+											rowdata.cells[3].innerHTML=myData.mobile;
+											rowdata.cells[4].innerHTML=myData.Address;
+											rowdata.cells[5].innerHTML=myData.state;
+										    rowdata.cells[6].innerHTML=myData.city;
+										    rowdata.cells[7].innerHTML=myData.gender;
+
+											resetFun();	
+											document.getElementById("changes").style.visibility = 'hidden';
+											document.getElementById("submit").style.visibility = 'visible';
+											document.getElementById("city-data").style.visibility = 'hidden';
+									        console.log(JSON.stringify(myData));
+										}
+								    }
+								    else document.getElementById('p2').innerText = "*invalid mobile number*";
+				                }
+				                else 
+							    {
+									document.getElementById('p1').innerText = alertMsg; 
+								
+									return false;
 								}
+ 							}
+						}
 			        }  
 
 			        function resetFun()
