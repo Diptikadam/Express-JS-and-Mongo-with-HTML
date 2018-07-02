@@ -2,488 +2,65 @@
 <html>
 	<head>
 		<title>Test project</title>
-		<style>
-			#table {
-			    font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
-			    border-collapse: collapse;
-			    width: 100%;
-			}
-
-			#table td, #table th {
-			    border: 2px solid #ddd;
-			    padding: 6px;
-			}
-
-			#table tr:nth-child(even){background-color: #f2f2f2;}
-
-			#table tr:hover {background-color: #ddd;}
-
-			#table th {
-			    padding-top: 12px;
-			    padding-bottom: 12px;
-			    text-align: left;
-			    background-color: black;
-			    color: white;
-			}
-			.button {
-			    background-color: gray;
-			    color: white;
-			    padding: 10px 25px;
-			    text-align: center;
-			    display: inline-block;
-			    font-size: 16px;
-			    margin: 4px 2px;
-			    cursor: pointer;
-			}
-
-			span{
-				color:red;
-			}
-
-			p{
-				font-size:12px;
-				color:red;
-			}
-
-		</style>
-
-		<script type="text/javascript">
-			window.onload = function() 
-			{
-					document.getElementById("changes").style.visibility = 'hidden';
-					function onUpdateClick() {
-						document.getElementById("submit").style.visibility = 'hidden';
-						document.getElementById("changes").style.visibility = 'visible';
-						
-						console.log("this",this);
-						var id = this.getAttribute("oid");
-						var table=document.getElementById("table");
-						var row = this.parentElement.parentElement;
-				        var rowdata = row;
-						document.getElementById("name").value=row.cells[2].innerText;
-						document.getElementById("mobile").value=row.cells[3].innerText;
-						document.getElementById("Address").value=row.cells[4].innerText;
-						document.getElementById("state").value=row.cells[5].innerText;
-						if(document.getElementById("state").value=="Maharashtra"){
-							var list4="<select Name=\"city\" id=\"city\">\
-							 <option value=\"Mumbai\" >Mumbai</option>\
-							 <option value=\"Pune\">Pune</option>\
-							 <option value=\"Nashik\" >Nashik</option>\
-							 <option value=\"Nagpur\" >Nagpur</option>\
-							 <option value=\"Thane\" >Thane</option>\
-							 </select>";
-							 document.getElementById("city-data").style.visibility = 'visible';
-							 document.getElementById("city-data").innerHTML = list4;
-							 document.getElementById("city").value=row.cells[6].innerHTML;
-						}
-						else if(document.getElementById("state").value=="Gujrat"){
-							var list4="<select Name=\"city\" id=\"city\">\
-							 <option value=\"Surat\" >Surat</option>\
-							 <option value=\"Rajkot\" >Rajkot</option>\
-							 <option value=\"Ahmedabad\" >Ahmedabad</option>\
-							 <option value=\"Vadodara\" >Vadodara</option>\
-							 </select>";
-							 document.getElementById("city-data").style.visibility = 'visible';
-							 document.getElementById("city-data").innerHTML = list4;
-							 document.getElementById("city").value=row.cells[6].innerHTML;
-						}
-						else if(document.getElementById("state").value=="Rajasthan"){
-							var list4="<select Name=\"city\" id=\"city\">\
-							 <option value=\"Jaipur\" >Jaipur</option>\
-							 <option value=\"Ajmer\" >Ajmer</option>\
-							 <option value=\"Pushkar\" >Pushkar</option>\
-							 </select>";
-							 document.getElementById("city-data").style.visibility = 'visible';
-							 document.getElementById("city-data").innerHTML = list4;
-							 document.getElementById("city").value=row.cells[6].innerHTML;
-						}
-						else if(document.getElementById("state").value=="Madhya Pradesh"){
-							var list4="<select Name=\"city\" id=\"city\">\
-							 <option value=\"Bhopal\" >Bhopal</option>\
-							 <option value=\"Indore\" >Indore</option>\
-							 <option value=\"Ujjain\" >Ujjain</option>\
-							 </select>";
-							 document.getElementById("city-data").style.visibility = 'visible';
-							 document.getElementById("city-data").innerHTML = list4;
-							 document.getElementById("city").value=row.cells[6].innerHTML;
-						}
-					  
-						if(row.cells[7].innerHTML=="Female")
-						{
-							document.getElementById("female").checked = true;
-							document.getElementById("male").checked = false;
-						}
-						else
-						{
-							document.getElementById("male").checked = true;
-							document.getElementById("female").checked = false;
-						}					
-
-						document.getElementById("changes").onclick = function() 
-						{
-							console.log("this in changes ",rowdata);
-							//document.getElementById("submit").style.visibility = 'visible';
-						    
-						    var name = document.getElementById('name');
-							var mobile = document.getElementById('mobile');
-							if (inputAlphabet(name, "* For your name please use alphabets only *")){
-								return name.value;
-				            }
-				            function inputAlphabet(inputtext, alertMsg) 
-							{
-								var alphaExp = /^[a-zA-Z]+$/;
-								if (inputtext.value.match(alphaExp)){
-									document.getElementById('p1').innerText = "";
-									if (mobile.value.match(/(7|8|9)\d{9}/)){
-										document.getElementById('p2').innerText = "";
-										var myData={};
-										myData._id = id;
-										myData.name = document.getElementById("name").value;
-										myData.mobile = document.getElementById("mobile").value;
-										myData.Address = document.getElementById("Address").value;
-										myData.city = document.getElementById("city").value;
-										myData.state = document.getElementById("state").value;
-									    if(document.getElementById("female").checked) myData.gender = document.getElementById("female").value;
-									    else myData.gender = document.getElementById("male").value;
-
-			             				var xmlhttp = new XMLHttpRequest(); 
-									    xmlhttp.open("POST", "http://localhost:3000/update");
-										xmlhttp.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
-										xmlhttp.send(JSON.stringify(myData));
-
-										if(!myData.name || !myData.mobile || !myData.Address || !myData.city || !myData.state || !myData.gender){
-													document.getElementById('p3').innerText = "* All fields are mandatory*"; 
-										}
-										else{
-											document.getElementById('p3').innerText = "";
-											rowdata.cells[2].innerHTML=myData.name;
-											rowdata.cells[3].innerHTML=myData.mobile;
-											rowdata.cells[4].innerHTML=myData.Address;
-											rowdata.cells[5].innerHTML=myData.state;
-										    rowdata.cells[6].innerHTML=myData.city;
-										    rowdata.cells[7].innerHTML=myData.gender;
-
-											resetFun();	
-											document.getElementById("changes").style.visibility = 'hidden';
-											document.getElementById("submit").style.visibility = 'visible';
-											document.getElementById("city-data").style.visibility = 'hidden';
-									        console.log(JSON.stringify(myData));
-										}
-								    }
-								    else document.getElementById('p2').innerText = "*invalid mobile number*";
-				                }
-				                else 
-							    {
-									document.getElementById('p1').innerText = alertMsg; 
-								
-									return false;
-								}
- 							}
-						}
-			        }  
-
-			        function resetFun()
-			        {
-			        	console.log("clicked");
-			        	document.getElementById("submit").style.visibility = 'visible';
-			        	document.getElementById("changes").style.visibility = 'hidden';
-			        	document.getElementById('name').value ="";
-			        	document.getElementById('mobile').value ="";
-			        	document.getElementById('Address').value ="";
-			        	document.getElementById('state').value ="select";
-			        	document.getElementById("city-data").style.visibility = 'hidden';
-			        	//document.getElementById('gender').value ="";
-			        }
-
-					function onDeleteClick() // delete row from table
-					{
-						resetFun();
-						console.log("this", this);
-
-					    var myData1={};
-					    myData1._id = this.getAttribute("oid");
-					    var xmlhttp = new XMLHttpRequest(); 
-						xmlhttp.open("POST", "http://localhost:3000/delete");
-						xmlhttp.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
-						xmlhttp.send(JSON.stringify(myData1));
-						var tab = document.getElementById("table");
-						tab.deleteRow(this.parentNode.parentNode.rowIndex);
-						
-					   console.log(JSON.stringify(myData1));
-					}
-
-					function onSelect() //show city for selected state 
-					{
-						document.getElementById("city-data").style.visibility = 'visible';
-						var option = document.getElementById("state");
-						var selectedOption = option.options[option.selectedIndex];
-						console.log(selectedOption);
-
-					    var myData1={};
-					    myData1._id = selectedOption.getAttribute("sid");
-					    console.log(myData1._id);
-
-					 	var xmlhttp = new XMLHttpRequest(); 
-						xmlhttp.open("POST", "http://localhost:3000/citydata");
-						xmlhttp.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
-						xmlhttp.send(JSON.stringify(myData1));
-						console.log(JSON.stringify(myData1));
-						//var xmhttp1 = new XMLHttpRequest();
-						xmlhttp.onreadystatechange = function() 
-						{
-						    if (this.readyState == 4 && this.status == 200) 
-						    {
-						    
-						    	var resp = JSON.parse(xmlhttp.responseText);
-							    console.log("data state", resp);
-							    var list1 ="<select Name=\"city\" id=\"city\">";
-							    for(var i = 0; i < resp.length; i++)
-							    {
-									list1 += "<option value=\""+resp[i].name+"\" class=\"opt\" >"+resp[i].name+"</option>";
-								}	  
-								list1 +="</select>";	
-								document.getElementById("city-data").innerHTML = list1;
-
-						    }
-						}   
-
-					}
-
-					document.getElementById("reset").onclick = resetFun;
-
-					var xhttp = new XMLHttpRequest(); //show user table 
-					xhttp.onreadystatechange = function() 
-					{
-					    if (this.readyState == 4 && this.status == 200) 
-					    {
-					       console.log("data", xhttp.responseText);
-					        var respObj = JSON.parse(xhttp.responseText);
-
-					       var table = "<table id =\"table\" style=\"width:100%\";> \
-					        <tr> \
-						       <th>Delete</th>\
-						       <th>Update</th>\
-					           <th>Name</th> \
-					           <th>Mobile</th> \
-					           <th>Address</th> \
-					           <th>State</th> \
-					           <th>City</th> \
-					           <th>Gender</th> \
-					        </tr>";
-
-					        for(var i = 0; i < respObj.length; i++)
-					        {
-					         	table += "<tr> \
-						           <td> <button oid=\"" + respObj[i]._id + "\" class=\"delete-btn\"  type=\"button\">Delete</button></td>\
-						           <td> <button oid=\"" + respObj[i]._id + "\" class=\"update-btn\" id=\"update\" type=\"button\">Update</button></td>\
-						           <td>"+ respObj[i].name +"</td> \
-						           <td>"+ respObj[i].mobile +"</td> \
-						           <td>"+ respObj[i].Address +"</td> \
-						           <td>"+ respObj[i].state +"</td>\
-						           <td>"+ respObj[i].city +"</td>\
-						           <td>"+ respObj[i].gender +"</td> \
-						         </tr>";
-					        }
-
-					        table += "</table>";
-
-					        document.getElementById("user-data").innerHTML = table;
-					        //console.log("btn", document.getElementsByClassName("delete-btn"));
-					        var del_arr = document.getElementsByClassName("delete-btn");
-					        for(var i = 0; i < del_arr.length; i++)
-					        {	
-					        	del_arr[i].onclick =onDeleteClick;
-							}
-							//console.log("update btn", document.getElementsByClassName("update-btn"));
-
-							var up_arr = document.getElementsByClassName("update-btn");
-
-					        for(var i=0;i<up_arr.length;i++)
-					        {
-								up_arr[i].onclick = onUpdateClick;
-							}
-						}
-						
-					}	
-					xhttp.open("GET","http://localhost:3000/users", true);
-					xhttp.send();
-
-					var xmhttp = new XMLHttpRequest();//to show state collection
-					xmhttp.onreadystatechange = function() 
-					{
-						if (this.readyState == 4 && this.status == 200) 
-						{
-							var respObj = JSON.parse(xmhttp.responseText);
-						    console.log("data state", respObj);
-						    var list ="<select Name=\"state\" id=\"state\">";
-						    list +="<option value=\"select\">Select-State</option>";
-						    for(var i = 0; i < respObj.length; i++)
-						    {
-								list += "<option sid=\""+respObj[i]._id+"\" value=\""+respObj[i].name+"\" class=\"opt\" >"+respObj[i].name+"</option>";
-							}	  
-							list+="</select>";	
-							document.getElementById("state-data").innerHTML = list;
-							//var option = document.getElementById("state");
-							//console.log(option);
-							for(var i = 0; i < respObj.length; i++)
-							{
-							  document.getElementById("state").onchange = onSelect;
-							}  
-
-						}
-						
-				    }
-				    
-					xmhttp.open("GET","http://localhost:3000/states",true);
-				    xmhttp.send();   
-
-					 
-
-					document.getElementById("submit").onclick = function formValidation()
-					{
-						var name = document.getElementById('name');
-						var mobile = document.getElementById('mobile');
-						if (inputAlphabet(name, "* For your name please use alphabets only *"))
-						{
-							return name.value;
-	 					}
-
-						function inputAlphabet(inputtext, alertMsg) 
-						{
-							var alphaExp = /^[a-zA-Z]+$/;
-							if (inputtext.value.match(alphaExp)){
-								document.getElementById('p1').innerText = "";
-								if (mobile.value.match(/(7|8|9)\d{9}/)){
-									document.getElementById('p2').innerText = "";
-									var myData = {};
-					         		myData.name = inputtext.value;
-						            myData.mobile = mobile.value;
-						            myData.Address = document.getElementById("Address").value;
-						            myData.city = document.getElementById("city").value;
-						            myData.state = document.getElementById("state").value;
-						            if(document.getElementById("female").checked) myData.gender = document.getElementById("female").value;
-						            else myData.gender = document.getElementById("male").value;
-								    var xmlhttp = new XMLHttpRequest();   
-									xmlhttp.open("POST", "http://localhost:3000/insert");
-									xmlhttp.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
-									xmlhttp.send(JSON.stringify(myData));
-
-									//var xml1 = new XMLHttpRequest();
-									xmlhttp.onreadystatechange = function() //create new row 
-										{
-											console.log("new http request");
-										    if (this.readyState == 4 && this.status == 200) 
-										    {
-										    	var data = JSON.parse(xmlhttp.responseText);
-										    	console.log("data ",data);
-										    	var tabb = document.getElementById("table");
-												var len = (tabb.rows.length);
-												if(!myData.name || !myData.mobile || !myData.Address || !myData.city || !myData.state || !myData.gender)
-												{
-													document.getElementById('p3').innerText = "* All fields are mandatory*"; 
-												}
-												else
-												{
-													document.getElementById('p3').innerText = "";
-													var row = tabb.insertRow(len).outerHTML="<tr>\
-													<td><button oid=\""+ data + "\" type=\"button\" class=\"delete-btn\" >Delete</td>\
-													<td><button oid=\""+ data + "\"type=\"button\" class=\"update-btn\">Update</td>\
-													<td>"+myData.name+"</td>\
-													<td>"+myData.mobile+"</td>\
-													<td>"+myData.Address+"</td>\
-													<td>"+myData.state+"</td>\
-													<td>"+myData.city+"</td>\
-													<td>"+myData.gender+"</td>\
-													<tr>";
-													// insert the new rows
-													var newElements = document.querySelectorAll("[oid=\"" + data +"\"]");
-													console.log("update id is",newElements);
-													newElements[0].onclick = onDeleteClick;
-													newElements[1].onclick = onUpdateClick;
-													resetFun();
-												
-													
-													console.log(JSON.stringify(myData));	
-												}
-												
-										    }
-										}    	    
-								}
-								else document.getElementById('p2').innerText = "*invalid mobile number*"; 
-									
-							}
-														
-						    else 
-						    {
-								document.getElementById('p1').innerText = alertMsg; 
-							
-								return false;
-							}
-						}
-					
-					}
-			}
-	
-		</script>
+		<meta charset="utf-8">
+  		<meta name="viewport" content="width=device-width, initial-scale=1">
     </head>
 	<body>
-		<form action="index.html" id="myForm">
-		
-			
-			<table cellpadding="4" width="50%" align="center" id="formtable">
-				<tr>
-					<td><p id="p3"></p></td>
-				</tr>
-				<tr>
-				    <td><b><a>Name</a></td>
-				    <td><input type=text name=name id="name" size="30" maxlength="20"required></td>
-				    <td><p id="p1"></p></td>
-				</tr>
+		<div class="container">
+		<h2>Registration Form</h2>
+		<form action ="formValidation();" id="myForm" class="well">
+			<p id="p3"></p>
 
-				<tr>
-				    <td><a><b>MobileNo</a></td>
-				    <td><input type="text" name="mobile" id="mobile" size="30" maxlength="10" minlength=10 required></td>
-				    <td><p id="p2"></p></td>
-				</tr>
+			<div class="form-group">
+				<a><b>Name</a>
+				<input type=text name=name id="name" size="30" class="form-control" maxlength="20"required>
+		    </div>
 
-				<tr>
-				    <td><a><b>Address</a></td>
-				    <td><textarea name="Address" id="Address" size="50" maxlength="40" required></textarea></td>
-				</tr>
+		    <div class="form-group">
+			    <a><b>MobileNo</a>
+			    <input type="text" name="mobile" id="mobile" class="form-control" size="10" maxlength="10" minlength=10 required>
+			</div>	    
 
-				<tr>
-				  <td><a><b>State</a></td>
-				  	<td>
-					  	<div id="state-data"></div>
-					</td>
-			    </tr>
+			<div class="form-group">
+			    <a><b>Address</a>
+			    <textarea name="address" id="address" size="50" maxlength="40" class="form-control" required></textarea>
+			</div>
 
-				<tr>
-				 	<td><a><b>City</a></td>
-				    <td>
-				    	<div id="city-data"></div>  	
-					</td> 
-				</tr>
+			<div class="form-group">
+			    <a><b>State</a>
+			  	<div id="state-data"></div>
+		    </div>
+
+			<div class="form-group">
+			 	<a><b>City</a>
+			    <div id="city-data"></div>
+			</div>  	
 				
-				<tr>
-					<td><a><b>Gender</a></td>
-					<td>
-						<input type="radio" name="gender" value="Female" id="female" checked>Female<br>
-						<input type="radio" name="gender" value="Male" id="male">Male<br> 
-					</td>
-				</tr>
-
-				<tr>
-				    <td colspan="2"><button type="button" id="submit" class="button" value="Submit">Submit</button>
-					    
-					    <button id="changes" type="button" class="button">Save Changes</button>
-					    <button type="button" id="reset" class="button">Reset</button>
-					</td>
-			    </tr>
-		    </table><br><br>
+			<div class="form-group">
+		        <a><b>Gender</a><br>
+				<input type="radio" name="gender" value="Female" id="female" checked="true">Female<br>
+				<input type="radio" name="gender" value="Male" id="male">Male<br>
+			</div>			 
+			
+				<input type="submit" id="submit" class="btn btn-primary"></button>
+				<button type="button" id="reset" class="btn btn-primary">Reset</button>  
+				<button id="changes" type="button" class="btn btn-primary">Save</button>	     
+		 <br>
 	    </form>
-
-	    <div id="demo"></div>
-	    <div id="user-data"></div>
+	    </div>
+	    <div class="container">
+		    <div id="demo"></div>
+		    <div class="well">
+		    	<div id="user-data" class="table-responsive" ></div>
+		    </div>	
+	    </div>
+		<link rel="stylesheet" href="./css/bootstrap.min.css">
+		<link rel="stylesheet" href="./css/my.css">
+		
+		<script type="text/javascript" src="./js/jquery.min.js"></script>
+		<script type="text/javascript" src="./js/bootstrap.min.js"></script>
+		<script type="text/javascript" src="./js/validation.js"></script>
+		<script type="text/javascript" src="./js/net.js"></script>
+		<script type="text/javascript" src="./js/my.js"></script>
     </body>
 </html>
